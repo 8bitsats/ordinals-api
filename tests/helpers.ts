@@ -9,7 +9,10 @@ import {
 } from '@hirosystems/chainhook-client';
 import { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
+<<<<<<< HEAD
 import { PgStore } from '../src/pg/pg-store';
+=======
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648
 
 export type TestFastifyServer = FastifyInstance<
   Server,

@@ -1,5 +1,17 @@
+<<<<<<< HEAD:src/pg/brc20/brc20-pg-store.ts
 import { BasePgStoreModule, PgSqlClient, batchIterate, logger } from '@hirosystems/api-toolkit';
 import { DbInscriptionIndexPaging, DbPaginatedResult } from '../types';
+=======
+import { BasePgStoreModule, logger } from '@hirosystems/api-toolkit';
+import * as postgres from 'postgres';
+import { hexToBuffer } from '../../../api/util/helpers';
+import {
+  DbInscription,
+  DbInscriptionIndexPaging,
+  DbLocation,
+  DbPaginatedResult,
+} from '../../../pg/types';
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648:src/meta-protocols/brc-20/pg/brc20-pg-store.ts
 import {
   DbBrc20Activity,
   DbBrc20Balance,
@@ -7,12 +19,26 @@ import {
   DbBrc20Token,
   DbBrc20TokenWithSupply,
 } from './types';
+<<<<<<< HEAD:src/pg/brc20/brc20-pg-store.ts
 import { Brc20TokenOrderBy } from '../../api/schemas';
 import { objRemoveUndefinedValues } from '../helpers';
 import { BitcoinEvent } from '@hirosystems/chainhook-client';
 import { sqlOr } from './helpers';
 import { INSERT_BATCH_SIZE } from '../pg-store';
 import { Brc20BlockCache } from './brc20-block-cache';
+=======
+
+import {
+  Brc20Deploy,
+  Brc20Mint,
+  Brc20Transfer,
+  brc20FromInscriptionContent,
+  isAddressSentAsFee,
+} from './helpers';
+
+import { Brc20TokenOrderBy } from '../../../api/schemas';
+import { objRemoveUndefinedValues } from '../../../pg/helpers';
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648:src/meta-protocols/brc-20/pg/brc20-pg-store.ts
 
 export class Brc20PgStore extends BasePgStoreModule {
   async updateBrc20Operations(

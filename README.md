@@ -46,8 +46,12 @@ Before you start, you'll need to have access to:
 
 1. An [Ordhook node](https://github.com/hirosystems/ordhook) with a fully
    indexed Ordinals database.
+<<<<<<< HEAD
 1. A local writeable Postgres database for data storage.
    * We recommended a 1TB volume size here.
+=======
+1. A local writeable Postgres database for data storage
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648
 
 ## Running the API
 

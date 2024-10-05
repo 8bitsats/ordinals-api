@@ -1,12 +1,3 @@
-import BigNumber from 'bignumber.js';
-import {
-  DbBrc20Activity,
-  DbBrc20Balance,
-  DbBrc20EventOperation,
-  DbBrc20Holder,
-  DbBrc20Token,
-  DbBrc20TokenWithSupply,
-} from '../../pg/brc20/types';
 import {
   DbFullyLocatedInscriptionResult,
   DbInscriptionLocationChange,
@@ -16,11 +7,6 @@ import {
   BlockHashParamCType,
   BlockHeightParamCType,
   BlockInscriptionTransfer,
-  Brc20ActivityResponse,
-  Brc20BalanceResponse,
-  Brc20HolderResponse,
-  Brc20Supply,
-  Brc20TokenResponse,
   InscriptionLocationResponse,
   InscriptionResponseType,
 } from '../schemas';
@@ -110,6 +96,7 @@ export function parseBlockTransfers(
   }));
 }
 
+<<<<<<< HEAD
 export function parseBrc20Tokens(items: DbBrc20Token[]): Brc20TokenResponse[] {
   return items.map(i => ({
     id: i.genesis_id,
@@ -207,6 +194,8 @@ export function parseBrc20Holders(items: DbBrc20Holder[]): Brc20HolderResponse[]
   }));
 }
 
+=======
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648
 export function parseSatPoint(satpoint: string): {
   tx_id: string;
   vout: string;
@@ -214,10 +203,6 @@ export function parseSatPoint(satpoint: string): {
 } {
   const [tx_id, vout, offset] = satpoint.split(':');
   return { tx_id: normalizedHexString(tx_id), vout: vout, offset };
-}
-
-function decimals(num: string, decimals: number): string {
-  return new BigNumber(num).toFixed(decimals);
 }
 
 /**

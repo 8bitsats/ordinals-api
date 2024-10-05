@@ -54,6 +54,7 @@ export class CountsPgStore extends BasePgStoreModule {
     }
   }
 
+<<<<<<< HEAD
   async applyCounts(sql: PgSqlClient, cache: BlockCache) {
     if (cache.mimeTypeCounts.size) {
       const entries = [];
@@ -113,6 +114,80 @@ export class CountsPgStore extends BasePgStoreModule {
         )
       `;
     // Address ownership count is handled in `PgStore`.
+=======
+  async applyInscriptions(writes: DbInscriptionInsert[]): Promise<void> {
+    if (writes.length === 0) return;
+    const mimeType = new Map<string, any>();
+    const rarity = new Map<string, any>();
+    const recursion = new Map<boolean, any>();
+    const type = new Map<string, any>();
+    for (const i of writes) {
+      const t = i.number < 0 ? 'cursed' : 'blessed';
+      mimeType.set(i.mime_type, {
+        mime_type: i.mime_type,
+        count: mimeType.get(i.mime_type)?.count ?? 0 + 1,
+      });
+      rarity.set(i.sat_rarity, {
+        sat_rarity: i.sat_rarity,
+        count: rarity.get(i.sat_rarity)?.count ?? 0 + 1,
+      });
+      recursion.set(i.recursive, {
+        recursive: i.recursive,
+        count: recursion.get(i.recursive)?.count ?? 0 + 1,
+      });
+      type.set(t, { type: t, count: type.get(t)?.count ?? 0 + 1 });
+    }
+    // `counts_by_address` and `counts_by_genesis_address` count increases are handled in
+    // `applyLocations`.
+    await this.sql`
+      WITH increase_mime_type AS (
+        INSERT INTO counts_by_mime_type ${this.sql([...mimeType.values()])}
+        ON CONFLICT (mime_type) DO UPDATE SET count = counts_by_mime_type.count + EXCLUDED.count
+      ),
+      increase_rarity AS (
+        INSERT INTO counts_by_sat_rarity ${this.sql([...rarity.values()])}
+        ON CONFLICT (sat_rarity) DO UPDATE SET count = counts_by_sat_rarity.count + EXCLUDED.count
+      ),
+      increase_recursive AS (
+        INSERT INTO counts_by_recursive ${this.sql([...recursion.values()])}
+        ON CONFLICT (recursive) DO UPDATE SET count = counts_by_recursive.count + EXCLUDED.count
+      )
+      INSERT INTO counts_by_type ${this.sql([...type.values()])}
+      ON CONFLICT (type) DO UPDATE SET count = counts_by_type.count + EXCLUDED.count
+    `;
+  }
+
+  async rollBackInscription(args: { inscription: DbInscription }): Promise<void> {
+    await this.sql`
+      WITH decrease_mime_type AS (
+        UPDATE counts_by_mime_type SET count = count - 1
+        WHERE mime_type = ${args.inscription.mime_type}
+      ),
+      decrease_rarity AS (
+        UPDATE counts_by_sat_rarity SET count = count - 1
+        WHERE sat_rarity = ${args.inscription.sat_rarity}
+      ),
+      decrease_recursive AS (
+        UPDATE counts_by_recursive SET count = count - 1
+        WHERE recursive = ${args.inscription.recursive}
+      ),
+      decrease_type AS (
+        UPDATE counts_by_type SET count = count - 1 WHERE type = ${
+          parseInt(args.inscription.number) < 0
+            ? DbInscriptionType.cursed
+            : DbInscriptionType.blessed
+        }
+      ),
+      decrease_genesis AS (
+        UPDATE counts_by_genesis_address SET count = count - 1 WHERE address = (
+          SELECT address FROM current_locations WHERE inscription_id = ${args.inscription.id}
+        )
+      )
+      UPDATE counts_by_address SET count = count - 1 WHERE address = (
+        SELECT address FROM current_locations WHERE inscription_id = ${args.inscription.id}
+      )
+    `;
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648
   }
 
   async rollBackCounts(sql: PgSqlClient, cache: BlockCache) {
@@ -227,14 +302,22 @@ export class CountsPgStore extends BasePgStoreModule {
   private async getRecursiveCount(recursive?: boolean): Promise<number> {
     const rec = recursive !== undefined ? [recursive] : [true, false];
     const result = await this.sql<{ count: number }[]>`
+<<<<<<< HEAD
       SELECT COALESCE(SUM(count), 0)::int AS count
+=======
+      SELECT COALESCE(SUM(count), 0) AS count
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648
       FROM counts_by_recursive
       WHERE recursive IN ${this.sql(rec)}
     `;
     return result[0].count;
   }
 
+<<<<<<< HEAD
   async getAddressCount(address?: string[]): Promise<number> {
+=======
+  private async getAddressCount(address?: string[]): Promise<number> {
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648
     if (!address) return 0;
     const result = await this.sql<{ count: number }[]>`
       SELECT COALESCE(SUM(count), 0)::int AS count

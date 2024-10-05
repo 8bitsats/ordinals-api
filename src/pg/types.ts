@@ -139,6 +139,61 @@ export type DbInscriptionLocationChange = {
   to_offset: string | null;
   to_value: string | null;
   to_timestamp: Date;
+<<<<<<< HEAD
+=======
+  to_genesis: boolean;
+  to_current: boolean;
+};
+
+export const LOCATIONS_COLUMNS = [
+  'id',
+  'inscription_id',
+  'genesis_id',
+  'block_height',
+  'block_hash',
+  'tx_id',
+  'tx_index',
+  'address',
+  'output',
+  'offset',
+  'value',
+  'timestamp',
+];
+
+export type DbInscriptionInsert = {
+  genesis_id: string;
+  number: number;
+  mime_type: string;
+  content_type: string;
+  content_length: number;
+  content: PgBytea;
+  fee: PgNumeric;
+  curse_type: string | null;
+  sat_ordinal: PgNumeric;
+  sat_rarity: string;
+  sat_coinbase_height: number;
+  recursive: boolean;
+};
+
+export type DbRevealInsert = {
+  inscription?: DbInscriptionInsert;
+  recursive_refs?: string[];
+  location: DbLocationInsert;
+};
+
+export type DbInscription = {
+  id: string;
+  genesis_id: string;
+  number: string;
+  mime_type: string;
+  content_type: string;
+  content_length: string;
+  fee: string;
+  sat_ordinal: string;
+  sat_rarity: string;
+  sat_coinbase_height: string;
+  recursive: boolean;
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648
 };
 
 export type DbInscriptionContent = {
@@ -147,6 +202,24 @@ export type DbInscriptionContent = {
   content: string;
 };
 
+<<<<<<< HEAD
+=======
+export const INSCRIPTIONS_COLUMNS = [
+  'id',
+  'genesis_id',
+  'number',
+  'mime_type',
+  'content_type',
+  'content_length',
+  'fee',
+  'curse_type',
+  'sat_ordinal',
+  'sat_rarity',
+  'sat_coinbase_height',
+  'recursive',
+];
+
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648
 export type DbInscriptionIndexPaging = {
   limit: number;
   offset: number;

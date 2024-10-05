@@ -17,7 +17,7 @@ import * as path from 'path';
 import * as postgres from 'postgres';
 import { Order, OrderBy } from '../api/schemas';
 import { ENV } from '../env';
-import { Brc20PgStore } from './brc20/brc20-pg-store';
+import { Brc20PgStore } from '../meta-protocols/brc-20/pg/brc20-pg-store';
 import { CountsPgStore } from './counts/counts-pg-store';
 import { getIndexResultCountType } from './counts/helpers';
 import {
@@ -30,20 +30,30 @@ import {
   DbLocation,
   DbPaginatedResult,
 } from './types';
+<<<<<<< HEAD
 import { normalizedHexString } from '../api/util/helpers';
 import { BlockCache } from './block-cache';
+=======
+import { CachePgStore } from './cache/cache-pg-store';
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648
 
 export const MIGRATIONS_DIR = path.join(__dirname, '../../migrations');
 const ORDINALS_GENESIS_BLOCK = 767430;
 export const INSERT_BATCH_SIZE = 3500;
 
+<<<<<<< HEAD
 type InscriptionIdentifier = { genesis_id: string } | { number: number };
 
 class BlockAlreadyIngestedError extends Error {}
+=======
+export type InscriptionIdentifier = { genesis_id: string } | { number: number };
+type PgQueryFragment = postgres.PendingQuery<postgres.Row[]>; // TODO: Move to api-toolkit
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648
 
 export class PgStore extends BasePgStore {
   readonly brc20: Brc20PgStore;
   readonly counts: CountsPgStore;
+  readonly cache: CachePgStore;
 
   static async connect(opts?: { skipMigrations: boolean }): Promise<PgStore> {
     const pgConfig: PgConnectionVars = {
@@ -73,6 +83,7 @@ export class PgStore extends BasePgStore {
     super(sql);
     this.brc20 = new Brc20PgStore(this);
     this.counts = new CountsPgStore(this);
+    this.cache = new CachePgStore(this);
   }
 
   /**
@@ -429,6 +440,7 @@ export class PgStore extends BasePgStore {
     }
   }
 
+<<<<<<< HEAD
   async getInscriptionsIndexETag(): Promise<string> {
     const result = await this.sql<{ etag: string }[]>`
       SELECT date_part('epoch', MAX(updated_at))::text AS etag FROM inscriptions
@@ -446,6 +458,8 @@ export class PgStore extends BasePgStore {
     return `${result[0].block_hash}:${result[0].inscription_count}`;
   }
 
+=======
+>>>>>>> 0f29209ba39b2e4cc4cb7e948b4c8b2989b0b648
   async getInscriptionContent(
     args: InscriptionIdentifier
   ): Promise<DbInscriptionContent | undefined> {
@@ -469,21 +483,6 @@ export class PgStore extends BasePgStore {
     `;
     if (result.count > 0) {
       return result[0];
-    }
-  }
-
-  async getInscriptionETag(args: InscriptionIdentifier): Promise<string | undefined> {
-    const result = await this.sql<{ etag: string }[]>`
-      SELECT date_part('epoch', updated_at)::text AS etag
-      FROM inscriptions
-      WHERE ${
-        'genesis_id' in args
-          ? this.sql`genesis_id = ${args.genesis_id}`
-          : this.sql`number = ${args.number}`
-      }
-    `;
-    if (result.count > 0) {
-      return result[0].etag;
     }
   }
 
